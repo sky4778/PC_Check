@@ -24,7 +24,7 @@
       <label>實際記憶體 RAM
         <select id="ram"><option value="4">4 GB</option><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="32">32 GB 以上</option></select></label>
       <label>顯示卡 VRAM
-        <select id="vram"><option value="0">內顯／不確定</option><option value="2">2 GB</option><option value="4">4 GB</option><option value="6">6 GB</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB 以上</option></select></label>
+        <select id="vram"><option value="0">內顯／不確定</option><option value="2">2 GB</option><option value="4">4 GB</option><option value="6">6 GB</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB</option><option value="24">24 GB 以上</option></select></label>
       <label>硬碟類型
         <select id="diskType"><option value="ssd">SSD</option><option value="hdd">HDD</option></select></label>
       <label>硬碟可用空間（GB）<input id="disk" type="number" min="0" value="100"></label>
@@ -46,8 +46,10 @@
       </div>
       <h2>各項檢查</h2>
       <ul class="lights" id="lights"></ul>
-      <h2>軟體相容性</h2>
-      <ul class="lights" id="appList"></ul>
+      <h2>本機 AI 模型</h2>
+      <ul class="lights" id="aiList"></ul>
+      <h2>3A 遊戲</h2>
+      <ul class="lights" id="gameList"></ul>
       <h2>讓 AI 給更深入的建議</h2>
       <textarea id="prompt" readonly rows="8"></textarea>
       <button id="copy" type="button">複製 AI 分析提示詞</button>

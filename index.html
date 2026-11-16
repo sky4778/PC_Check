@@ -9,39 +9,51 @@
 <body>
 <header class="top">
   <h1>AI 電腦設備檢查站</h1>
-  <p class="sub">偵測你的電腦、算出分數，並看能不能跑 Ollama、Stable Diffusion 與熱門遊戲。</p>
+  <p class="sub">偵測你的電腦、算出分數，看它能不能跑 Ollama、Stable Diffusion 與熱門遊戲。</p>
 </header>
-<main class="grid">
-  <section class="card" id="detect">
-    <h2>① 自動偵測</h2>
-    <dl id="detectList"></dl>
-    <p class="hint">瀏覽器無法讀取硬碟健康度，且記憶體最多顯示 8GB，請在下方手動補充。</p>
-  </section>
 
-  <section class="card" id="manual">
-    <h2>② 手動補充</h2>
-    <label>實際記憶體 RAM
-      <select id="ram"><option value="4">4 GB</option><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="32">32 GB 以上</option></select></label>
-    <label>顯示卡 VRAM
-      <select id="vram"><option value="0">內顯／不確定</option><option value="2">2 GB</option><option value="4">4 GB</option><option value="6">6 GB</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB 以上</option></select></label>
-    <label>硬碟類型
-      <select id="diskType"><option value="ssd">SSD</option><option value="hdd">HDD</option></select></label>
-    <label>硬碟可用空間（GB）<input id="disk" type="number" min="0" value="100"></label>
-    <label>電池健康度 %（桌機可留空）<input id="battery" type="number" min="0" max="100" placeholder="例如 85"></label>
-    <button id="run" type="button">開始分析</button>
-  </section>
+<main class="layout">
+  <aside class="panel">
+    <section>
+      <h2>偵測到的資料</h2>
+      <dl id="detectList"></dl>
+      <p class="hint">瀏覽器讀不到硬碟健康度，記憶體也最多顯示 8GB，請在下方補充。</p>
+    </section>
+    <section>
+      <h2>補充資料</h2>
+      <label>實際記憶體 RAM
+        <select id="ram"><option value="4">4 GB</option><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="32">32 GB 以上</option></select></label>
+      <label>顯示卡 VRAM
+        <select id="vram"><option value="0">內顯／不確定</option><option value="2">2 GB</option><option value="4">4 GB</option><option value="6">6 GB</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB 以上</option></select></label>
+      <label>硬碟類型
+        <select id="diskType"><option value="ssd">SSD</option><option value="hdd">HDD</option></select></label>
+      <label>硬碟可用空間（GB）<input id="disk" type="number" min="0" value="100"></label>
+      <label>電池健康度 %（桌機可留空）<input id="battery" type="number" min="0" max="100" placeholder="例如 85"></label>
+      <button id="run" type="button">開始分析</button>
+    </section>
+  </aside>
 
-  <section class="card wide" id="result" hidden>
-    <h2>③ 分析結果</h2>
-    <div class="score"><div class="ring" id="ring"><span id="total">0</span></div><p id="verdict"></p></div>
-    <ul class="lights" id="lights"></ul>
-    <h3>軟體相容性</h3>
-    <ul class="lights" id="appList"></ul>
-    <h3>④ 讓 AI 給更深入的建議</h3>
-    <textarea id="prompt" readonly rows="8"></textarea>
-    <button id="copy" type="button">複製 AI 分析提示詞</button>
-    <p class="hint" id="copyMsg"></p>
-  </section>
+  <div class="board">
+    <section id="empty" class="score">
+      <div class="ring" id="ringEmpty"><span>--</span></div>
+      <p class="verdict">填好左側資料，按「開始分析」。</p>
+    </section>
+
+    <section id="result" hidden>
+      <div class="score">
+        <div class="ring" id="ring"><span id="total">0</span></div>
+        <p class="verdict" id="verdict"></p>
+      </div>
+      <h2>各項檢查</h2>
+      <ul class="lights" id="lights"></ul>
+      <h2>軟體相容性</h2>
+      <ul class="lights" id="appList"></ul>
+      <h2>讓 AI 給更深入的建議</h2>
+      <textarea id="prompt" readonly rows="8"></textarea>
+      <button id="copy" type="button">複製 AI 分析提示詞</button>
+      <p class="hint" id="copyMsg"></p>
+    </section>
+  </div>
 </main>
 <script src="data/apps.js"></script>
 <script src="assets/app.js"></script>

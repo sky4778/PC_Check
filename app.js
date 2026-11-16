@@ -75,11 +75,20 @@
   }
 
   function li(x) {
-    return '<li><span class="dot ' + light(x.score) + '"></span><div><strong>' + x.name +
-      '</strong><small>' + x.note + "</small></div></li>";
+    var c = light(x.score);
+    return '<li><span class="dot ' + c + '"></span><div class="who"><strong>' + x.name +
+      '</strong><small>' + x.note + '</small></div><span class="num">' + x.score +
+      '</span><span class="bar ' + c + '" data-v="' + x.score + '"></span></li>';
+  }
+
+  // 把分數寫進進度條的 CSS 變數（HTML 不寫 inline style）
+  function paint() {
+    var b = document.querySelectorAll(".bar");
+    for (var i = 0; i < b.length; i++) b[i].style.setProperty("--v", b[i].dataset.v);
   }
 
   function show(cats, apps, total, u) {
+    $("empty").hidden = true;
     $("result").hidden = false;
     $("total").textContent = total;
     var ring = $("ring");
@@ -89,6 +98,7 @@
       : total >= 40 ? "堪用，部分 AI 工具或遊戲會吃力。" : "偏弱，建議升級後再嘗試。";
     $("lights").innerHTML = cats.map(li).join("");
     $("appList").innerHTML = apps.map(li).join("");
+    paint();
     var lines = ["我的電腦檢查結果（綜合 " + total + "/100）：",
       "- CPU 核心：" + info.cores + "；RAM：" + u.ram + "GB；VRAM：" + u.vram + "GB；顯示卡：" + info.gpu,
       "- 硬碟：" + u.diskType.toUpperCase() + "，可用 " + u.disk + "GB；電池健康：" + (u.battery !== null ? u.battery + "%" : "無"),

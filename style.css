@@ -1,0 +1,35 @@
+:root{
+  --bg:#0b1020; --card:#131a30; --line:#232d4d; --fg:#e6ebff; --muted:#8c97c0;
+  --accent:#38bdf8; --ok:#34d399; --warn:#fbbf24; --bad:#f87171;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);line-height:1.7;
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.top,.grid,.foot{max-width:960px;margin:0 auto;padding:0 1.25rem}
+.top{padding-top:2.5rem}
+h1{margin:0;font-size:2rem;color:var(--accent)}
+h2{margin:0 0 .8rem;font-size:1.15rem}
+h3{margin:1.5rem 0 .5rem;font-size:1rem}
+.sub,.hint{color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem}
+.wide{grid-column:1/-1}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem}
+dt{color:var(--muted)} dd{margin:0;text-align:right;word-break:break-all}
+label{display:block;margin-bottom:.7rem;color:var(--muted);font-size:.9rem}
+select,input,textarea{width:100%;margin-top:.2rem;padding:.5rem;border-radius:8px;border:1px solid var(--line);
+  background:var(--bg);color:var(--fg);font:inherit}
+button{background:var(--accent);color:#04101c;border:0;border-radius:8px;padding:.6rem 1.2rem;font-weight:700;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+.score{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.ring{--p:0;--c:var(--ok);width:120px;height:120px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0)}
+.ring span{width:92px;height:92px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2rem;font-weight:800}
+.lights{list-style:none;padding:0;margin:.5rem 0;display:grid;gap:.5rem}
+.lights li{display:flex;align-items:center;gap:.7rem;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.6rem .9rem}
+.lights small{color:var(--muted);display:block}
+.dot{width:14px;height:14px;border-radius:50%;flex:none}
+.ok{background:var(--ok)} .warn{background:var(--warn)} .bad{background:var(--bad)}
+textarea{font-size:.85rem;margin-bottom:.7rem}
+.foot{padding-top:2rem;padding-bottom:2rem;color:var(--muted);font-size:.85rem}

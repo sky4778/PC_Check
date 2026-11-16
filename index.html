@@ -23,8 +23,12 @@
       <h2>補充資料</h2>
       <label>實際記憶體 RAM
         <select id="ram"><option value="4">4 GB</option><option value="8">8 GB</option><option value="16" selected>16 GB</option><option value="32">32 GB 以上</option></select></label>
-      <label>顯示卡 VRAM
-        <select id="vram"><option value="0">內顯／不確定</option><option value="2">2 GB</option><option value="4">4 GB</option><option value="6">6 GB</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB</option><option value="24">24 GB 以上</option></select></label>
+      <label>顯示卡品牌 <select id="gpuBrand"></select></label>
+      <label>顯示卡型號 <select id="gpuModel"></select></label>
+      <p class="hint" id="gpuHint"></p>
+      <label>處理器品牌 <select id="cpuBrand"></select></label>
+      <label>處理器等級 <select id="cpuModel"></select></label>
+      <p class="hint" id="cpuHint"></p>
       <label>硬碟類型
         <select id="diskType"><option value="ssd">SSD</option><option value="hdd">HDD</option></select></label>
       <label>硬碟可用空間（GB）<input id="disk" type="number" min="0" value="100"></label>
@@ -58,6 +62,8 @@
   </div>
 </main>
 <script src="data/apps.js"></script>
+<script src="data/gpus.js"></script>
+<script src="data/cpus.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

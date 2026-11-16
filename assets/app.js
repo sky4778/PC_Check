@@ -8,6 +8,42 @@
   function avg(a) { return a.length ? Math.round(a.reduce(function (x, y) { return x + y; }, 0) / a.length) : 0; }
   function tier(v, hi, mid) { return v >= hi ? 100 : v >= mid ? 60 : 25; }
 
+  var GPUS = window.GPUS, CPUS = window.CPUS;
+
+  // 下拉選單：品牌 → 型號
+  function fillBrand(sel, list) {
+    var seen = [];
+    list.forEach(function (x) { if (seen.indexOf(x.brand) < 0) seen.push(x.brand); });
+    sel.innerHTML = seen.map(function (b) { return "<option>" + b + "</option>"; }).join("");
+  }
+  function fillModel(sel, list, brand) {
+    sel.innerHTML = list.map(function (x, i) {
+      var tag = x.unified ? "（統一記憶體）" : x.vram ? "（" + x.vram + " GB）" : "";
+      return x.brand === brand ? '<option value="' + i + '">' + x.name + tag + "</option>" : "";
+    }).join("");
+  }
+
+  // 依偵測結果預選顯卡與 CPU 品牌（CPU 型號瀏覽器讀不到，只能推測品牌）
+  function initPickers() {
+    fillBrand($("gpuBrand"), GPUS);
+    fillBrand($("cpuBrand"), CPUS);
+    var gi = -1;
+    GPUS.forEach(function (g, i) { if (gi < 0 && g.re && new RegExp(g.re, "i").test(info.gpu)) gi = i; });
+    var matched = gi >= 0;
+    if (!matched) gi = GPUS.length - 1;
+    $("gpuBrand").value = GPUS[gi].brand;
+    fillModel($("gpuModel"), GPUS, GPUS[gi].brand);
+    $("gpuModel").value = String(gi);
+    $("gpuHint").textContent = matched
+      ? "已自動辨識為 " + GPUS[gi].name + "，不對請自行修改（筆電版 VRAM 常較少）。"
+      : "無法辨識顯示卡，請自行選擇品牌與型號。";
+    var cb = /Apple/i.test(info.gpu) ? "Apple" : /Intel/i.test(info.gpu) ? "Intel"
+      : /Radeon.*Graphics/i.test(info.gpu) ? "AMD" : "其他／不確定";
+    $("cpuBrand").value = cb;
+    fillModel($("cpuModel"), CPUS, cb);
+    $("cpuHint").textContent = "瀏覽器讀不到 CPU 型號，只偵測到 " + info.cores + " 個執行緒，請自行選等級。";
+  }
+
   function detect() {
     var gl, gpu = "無法取得";
     try {
@@ -24,6 +60,7 @@
       downlink: c.downlink || null,
       latency: null
     };
+    initPickers();
     var t = performance.now();
     fetch("index.html", { method: "HEAD", cache: "no-store" })
       .then(function () { info.latency = Math.round(performance.now() - t); render(); })
@@ -33,7 +70,7 @@
 
   function render() {
     var rows = [
-      ["CPU 核心數", info.cores || "未知"],
+      ["CPU 執行緒數", info.cores || "未知"],
       ["記憶體（偵測）", info.mem ? info.mem + " GB（上限 8）" : "此瀏覽器不支援"],
       ["螢幕解析度", info.screen],
       ["顯示卡", info.gpu],
@@ -46,13 +83,19 @@
 
   function analyze() {
     var u = {
-      ram: +$("ram").value, vram: +$("vram").value, disk: +$("disk").value || 0,
+      ram: +$("ram").value, vram: 0, disk: +$("disk").value || 0,
       diskType: $("diskType").value,
       battery: $("battery").value === "" ? null : +$("battery").value
     };
+    var g = GPUS[+$("gpuModel").value], c = CPUS[+$("cpuModel").value];
+    u.vram = g.unified ? Math.round(u.ram * 0.7) : g.vram;
+    var thr = tier(info.cores, 12, 6);
     var cats = [];
-    cats.push({ name: "硬體規格", score: avg([tier(info.cores, 8, 4), tier(u.ram, 16, 8)]),
-      note: info.cores + " 核心／" + u.ram + "GB RAM／VRAM " + u.vram + "GB" });
+    cats.push({ name: "處理器 CPU", score: c.score === null ? thr : avg([c.score, thr]),
+      note: c.name + "／" + info.cores + " 執行緒" });
+    cats.push({ name: "顯示卡 GPU", score: g.score,
+      note: g.name + "／VRAM " + u.vram + "GB" + (g.unified ? "（以 RAM 的 70% 估算）" : "") });
+    cats.push({ name: "記憶體 RAM", score: tier(u.ram, 16, 8), note: u.ram + " GB" });
     var st = [u.diskType === "ssd" ? 100 : 40, tier(u.disk, 100, 30)];
     if (u.battery !== null) st.push(tier(u.battery, 80, 60));
     cats.push({ name: "硬碟與電池", score: avg(st),
@@ -106,7 +149,7 @@
     $("gameList").innerHTML = byType("game");
     paint();
     var lines = ["我的電腦檢查結果（綜合 " + total + "/100）：",
-      "- CPU 核心：" + info.cores + "；RAM：" + u.ram + "GB；VRAM：" + u.vram + "GB；顯示卡：" + info.gpu,
+      "- CPU：" + $("cpuModel").selectedOptions[0].textContent + "（" + info.cores + " 執行緒）；RAM：" + u.ram + "GB；顯示卡：" + $("gpuModel").selectedOptions[0].textContent + "，可用 VRAM " + u.vram + "GB",
       "- 硬碟：" + u.diskType.toUpperCase() + "，可用 " + u.disk + "GB；電池健康：" + (u.battery !== null ? u.battery + "%" : "無"),
       "- 網路：延遲 " + (info.latency !== null ? info.latency + "ms" : "未知") + "，下行 " + (info.downlink || "未知") + "Mbps",
       "- 軟體相容：" + apps.map(function (a) { return a.name + "=" + a.note; }).join("；"),
@@ -123,5 +166,7 @@
     if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, function () { $("prompt").select(); });
     else { $("prompt").select(); document.execCommand("copy"); ok(); }
   });
+  $("gpuBrand").addEventListener("change", function () { fillModel($("gpuModel"), GPUS, this.value); });
+  $("cpuBrand").addEventListener("change", function () { fillModel($("cpuModel"), CPUS, this.value); });
   detect();
 })();
